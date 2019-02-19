@@ -1,18 +1,25 @@
 {
     "name": "pheromone/phpcs-security-audit",
-    "description": "phpcs-security-audit is a set of PHP_CodeSniffer rules that finds flaws or weaknesses related to security in PHP and its popular CMS or frameworks.",
-    "license": "gpl-v2",
+	"type" : "phpcodesniffer-standard",
+    "description": "phpcs-security-audit is a set of PHP_CodeSniffer rules that finds vulnerabilities and weaknesses related to security in PHP code",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Jonathan Marcil",
-            "email": "jonathan.marcil@pheromone.ca"
+            "homepage": "https://twitter.com/jonathanmarcil"
         }
     ],
     "require": {
         "php": ">=5.4",
-        "squizlabs/php_codesniffer": ">=2.3.3"
+        "squizlabs/php_codesniffer": ">3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPCS_SecurityAudit\\": "Security/"
+        }
     },
     "scripts": {
-        "post-install-cmd": "ln -s ../../../../../Security vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Security"
+        "post-install-cmd": "sh symlink.sh",
+        "post-update-cmd": "sh symlink.sh"
     }
 }

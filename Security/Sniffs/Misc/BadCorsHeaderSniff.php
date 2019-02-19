@@ -1,18 +1,18 @@
 <?php
-namespace PHPCS_SecurityAudit\Sniffs\BadFunctions;
+namespace PHPCS_SecurityAudit\Sniffs\Misc;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
 
-class CryptoFunctionsSniff implements Sniff  {
+class BadCorsHeaderSniff implements Sniff  {
 	/**
 	* Returns the token types that this sniff is interested in.
 	*
 	* @return array(int)
 	*/
 	public function register() {
-		return array(T_STRING);
+		return array(T_CONSTANT_ENCAPSED_STRING, T_DOUBLE_QUOTED_STRING);
 	}
 
 	/**
@@ -27,7 +27,16 @@ class CryptoFunctionsSniff implements Sniff  {
 	public function process(File $phpcsFile, $stackPtr) {
 		$utils = \PHPCS_SecurityAudit\Sniffs\UtilsFactory::getInstance();
 		$tokens = $phpcsFile->getTokens();
-		if (preg_match("/^mcrypt_/", $tokens[$stackPtr]['content']) || in_array($tokens[$stackPtr]['content'], $utils::getCryptoFunctions())) {
+		if (stristr($tokens[$stackPtr]['content'], 'Access-Control-Allow-Origin')) {
+			$closer = $phpcsFile->findNext(T_CLOSE_PARENTHESIS, $stackPtr);
+			$s = $phpcsFile->findNext(\PHP_CodeSniffer\Util\Tokens::$stringTokens, $stackPtr + 1, $closer);
+			if ($s && stristr($tokens[$s]['content'], '*')) {
+				$phpcsFile->addWarning('Bad CORS header detected.', $stackPtr, 'WarnPCKS1Crypto');
+			}
+			
+		}
+		/*
+		if (preg_match("/^mcrypt_/", ) || in_array($tokens[$stackPtr]['content'], $utils::getCryptoFunctions())) {
 			$tokstr = $tokens[$stackPtr]['content'];
 			if ( $tokstr == "openssl_public_encrypt" || $tokstr == "openssl_private_decrypt") {
 				$p4 = $utils::get_param_tokens($phpcsFile, $stackPtr, 4);
@@ -47,6 +56,8 @@ class CryptoFunctionsSniff implements Sniff  {
 				}
 			}
 		}
+		
+		*/
 	}
 
 }

@@ -30,10 +30,18 @@
 	mysql_query($a);
 	mysql_query($_GET);
 
+
+	// Crypto
+	mcrypt_encrypt();
+	openssl_public_encrypt($i,$e,$k, OPENSSL_PKCS1_PADDING);
+
 	// CVEs
 	xml_parse_into_struct(xml_parser_create_ns(), str_repeat("<blah>", 1000), $a);
 	quoted_printable_encode(str_repeat("\xf4", 1000));
 
+	// Misc
+	$a->withHeader('Access-Control-Allow-Origin', '*');
+	include('abc.xyz');
 
 	// Easy user input
 	$_GET['a'] = 'xss';
@@ -54,7 +62,7 @@
 	// FilesystemFunctions
 	file_create_filename(arg(1));
 	symlink($a);
-
+	delete($a);
 
 	// Drupal 7 Dynamic queries SQLi
 	$query = db_select('tname', "wn");
